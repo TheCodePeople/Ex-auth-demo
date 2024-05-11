@@ -9,6 +9,7 @@ const generateToken = (userCredentials) => {
     email: userCredentials.email,
     firstName: userCredentials.firstName,
     lastName: userCredentials.lastName,
+    exp: process.env.EXP,
   };
   const token = jwt.sign(payload, process.env.SECRET_KEY);
   return token;
@@ -26,6 +27,7 @@ const signup = async (req, res, next) => {
     next(error);
   }
 };
+
 const signIn = async (req, res, next) => {
   try {
     const payload = req.user;

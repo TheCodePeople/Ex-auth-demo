@@ -7,6 +7,11 @@ const ProductSchema = new Schema({
   price: Number,
   description: String,
   image: String,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 
 const Product = model("Product", ProductSchema);
