@@ -2,7 +2,7 @@ const Product = require("../models/Product");
 
 const getAllProducts = async (req, res, next) => {
   try {
-    const allProducts = await Product.find({});
+    const allProducts = await Product.find({}).populate("user");
     res.status(200).json({ allProducts });
   } catch (error) {
     next(error);
@@ -11,7 +11,7 @@ const getAllProducts = async (req, res, next) => {
 
 const createProduct = async (req, res, next) => {
   try {
-    const productData = { ...req.body, user: req.user._id };
+    const productData = { ...req.body, user: req.user.id };
     const newProduct = await Product.create(productData);
     res.status(201).json({ newProduct });
   } catch (error) {
@@ -23,10 +23,11 @@ const deleteProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
     const foundProduct = await Product.findById(id);
+
     if (!foundProduct)
       return res.status(404).json({ message: "Product not found" });
 
-    if (foundProduct.user._id === req.user._id) {
+    if (foundProduct.user._id.equals(req.user.id)) {
       const deletedProduct = await Product.deleteOne({ _id: foundProduct.id });
       if (deletedProduct)
         return res.status(200).json({ message: "Deleted successfully" });
@@ -46,18 +47,20 @@ const updateProduct = async (req, res, next) => {
     const newData = req.body;
 
     const foundProduct = await Product.findById(id);
+
     if (!foundProduct)
       return res.status(404).json({ message: "Product not found" });
 
-    if (foundProduct.user._id === req.user._id) {
+    if (foundProduct.user._id.equals(req.user.id)) {
       const updatedProduct = await Product.updateOne(
-        { _id: foundProduct.id },
+        { _id: foundProduct._id },
         newData,
         {
           new: true,
         }
       );
-      if (updatedProduct) return res.status(201).json({ updatedProduct });
+      if (updatedProduct)
+        return res.status(201).json({ message: "Updated successfully" });
     } else {
       res.status(401).json({
         message: "Sorry, you don't have permission to edit this product",
