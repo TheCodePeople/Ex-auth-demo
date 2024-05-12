@@ -10,17 +10,16 @@ const UserSchema = new Schema({
   },
   firstName: {
     type: String,
-    required: true,
   },
-  firstName: {
+  lastName: {
     type: String,
-    required: true,
   },
   email: {
     type: String,
   },
   password: {
     type: String,
+    required: true,
     min: [8, "Password should be more or qual than 8 chars"],
   },
 });
