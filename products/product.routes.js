@@ -1,5 +1,5 @@
 const express = require("express");
-const passport = require("passport");
+
 const router = express.Router();
 
 const {
@@ -8,29 +8,13 @@ const {
   deleteProduct,
   updateProduct,
 } = require("../products/product.controllers");
-const { authenticateToken } = require("../middlewares/auth");
 
 router.get("/", getAllProducts);
 
-router.post(
-  "/",
-  // passport.authenticate("jwt", { session: false }),
-  authenticateToken,
-  createProduct
-);
+router.post("/", createProduct);
 
-router.put(
-  "/:id",
-  // passport.authenticate("jwt", { session: false }),
-  authenticateToken,
-  updateProduct
-);
+router.put("/:id", updateProduct);
 
-router.delete(
-  "/:id",
-  // passport.authenticate("jwt", { session: false }),
-  authenticateToken,
-  deleteProduct
-);
+router.delete("/:id", deleteProduct);
 
 module.exports = router;

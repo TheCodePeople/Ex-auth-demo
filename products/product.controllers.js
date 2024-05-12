@@ -11,7 +11,6 @@ const getAllProducts = async (req, res, next) => {
 
 const createProduct = async (req, res, next) => {
   try {
-    const productData = { ...req.body, user: req.user.id };
     const newProduct = await Product.create(productData);
     res.status(201).json({ newProduct });
   } catch (error) {
@@ -26,16 +25,9 @@ const deleteProduct = async (req, res, next) => {
 
     if (!foundProduct)
       return res.status(404).json({ message: "Product not found" });
-
-    if (foundProduct.user._id.equals(req.user.id)) {
-      const deletedProduct = await Product.deleteOne({ _id: foundProduct.id });
-      if (deletedProduct)
-        return res.status(200).json({ message: "Deleted successfully" });
-    } else {
-      res.status(401).json({
-        message: "Sorry, you don't have permission to delete this product",
-      });
-    }
+    const deletedProduct = await Product.deleteOne({ _id: foundProduct.id });
+    if (deletedProduct)
+      return res.status(200).json({ message: "Deleted successfully" });
   } catch (error) {
     next(error);
   }
@@ -47,25 +39,15 @@ const updateProduct = async (req, res, next) => {
     const newData = req.body;
 
     const foundProduct = await Product.findById(id);
-
-    if (!foundProduct)
-      return res.status(404).json({ message: "Product not found" });
-
-    if (foundProduct.user._id.equals(req.user.id)) {
-      const updatedProduct = await Product.updateOne(
-        { _id: foundProduct._id },
-        newData,
-        {
-          new: true,
-        }
-      );
-      if (updatedProduct)
-        return res.status(201).json({ message: "Updated successfully" });
-    } else {
-      res.status(401).json({
-        message: "Sorry, you don't have permission to edit this product",
-      });
-    }
+    const updatedProduct = await Product.updateOne(
+      { _id: foundProduct._id },
+      newData,
+      {
+        new: true,
+      }
+    );
+    if (updatedProduct)
+      return res.status(201).json({ message: "Updated successfully" });
   } catch (error) {
     next(error);
   }
