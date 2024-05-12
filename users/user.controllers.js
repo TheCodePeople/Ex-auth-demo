@@ -9,9 +9,10 @@ const generateToken = (userCredentials) => {
     email: userCredentials.email,
     firstName: userCredentials.firstName,
     lastName: userCredentials.lastName,
-    exp: process.env.EXP,
   };
-  const token = jwt.sign(payload, process.env.SECRET_KEY);
+  const token = jwt.sign(payload, process.env.SECRET_KEY, {
+    expiresIn: Date.now() + process.env.EXP,
+  });
   return token;
 };
 
